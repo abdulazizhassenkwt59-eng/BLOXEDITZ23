@@ -1,0 +1,234 @@
+-- =============================================================================
+-- AUTOMATED AI SERVER-SIDE DATA SYSTEM (ALL-IN-ONE BUILD)
+-- =============================================================================
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- SECURITY: Change this to your exact Roblox UserID so ONLY you can open the UI
+local OWNER_ID = 10813216245
+
+-- CREATE THE NETWORK BOUNDARY
+local RemoteEvent = ReplicatedStorage:FindFirstChild("AI_System_Gate")
+if not RemoteEvent then
+	RemoteEvent = Instance.new("RemoteEvent")
+	RemoteEvent.Name = "AI_System_Gate"
+	RemoteEvent.Parent = ReplicatedStorage
+end
+
+-- =============================================================================
+-- PHASE 1: GENERATE CYBER-DARK EXECUTOR VISUAL INTERFACE
+-- =============================================================================
+local function BuildPremiumUI(player)
+	if player.UserId ~= OWNER_ID then return end
+	if player:WaitForChild("PlayerGui"):FindFirstChild("AI_Executor_Panel") then return end
+	
+	local ScreenGui = Instance.new("ScreenGui")
+	ScreenGui.Name = "AI_Executor_Panel"
+	ScreenGui.ResetOnSpawn = false
+	ScreenGui.Parent = player.PlayerGui
+	
+	-- MAIN WINDOW DISPLAY (Sleek dark layout)
+	local MainPanel = Instance.new("Frame")
+	MainPanel.Name = "MainPanel"
+	MainPanel.Size = UDim2.new(0.55, 0, 0.5, 0)
+	MainPanel.Position = UDim2.new(0.5, 0, 0.5, 0)
+	MainPanel.AnchorPoint = Vector2.new(0.5, 0.5)
+	MainPanel.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+	MainPanel.BorderSizePixel = 0
+	MainPanel.Parent = ScreenGui
+	
+	local Corner = Instance.new("UICorner")
+	Corner.CornerRadius = UDim.new(0, 10)
+	Corner.Parent = MainPanel
+	
+	local Stroke = Instance.new("UIStroke")
+	Stroke.Color = Color3.fromRGB(0, 210, 150) -- Cyber glow perimeter border
+	Stroke.Thickness = 1.5
+	Stroke.Parent = MainPanel
+	
+	-- TOP HEADER TITLE BAR
+	local Header = Instance.new("Frame")
+	Header.Name = "Header"
+	Header.Size = UDim2.new(1, 0, 0.15, 0)
+	Header.BackgroundColor3 = Color3.fromRGB(22, 22, 28)
+	Header.BorderSizePixel = 0
+	Header.Parent = MainPanel
+	
+	local HeaderCorner = Instance.new("UICorner")
+	HeaderCorner.CornerRadius = UDim.new(0, 10)
+	HeaderCorner.Parent = Header
+	
+	local TitleText = Instance.new("TextLabel")
+	TitleText.Size = UDim2.new(1, -20, 1, 0)
+	TitleText.Position = UDim2.new(0, 15, 0, 0)
+	TitleText.BackgroundTransparency = 1
+	TitleText.Text = "⚡ NEXUS AI: SERVER DATA ENGINE"
+	TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TitleText.Font = Enum.Font.GothamBold
+	TitleText.TextSize = 16
+	TitleText.TextXAlignment = Enum.TextXAlignment.Left
+	TitleText.Parent = Header
+	
+	-- USER NATURAL LANGUAGE PROMPT INPUT BOX
+	local PromptInput = Instance.new("TextBox")
+	PromptInput.Name = "PromptInput"
+	PromptInput.Size = UDim2.new(0.94, 0, 0.55, 0)
+	PromptInput.Position = UDim2.new(0.03, 0, 0.22, 0)
+	PromptInput.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
+	PromptInput.TextColor3 = Color3.fromRGB(0, 255, 170)
+	PromptInput.TextSize = 14
+	PromptInput.Font = Enum.Font.Code
+	PromptInput.TextXAlignment = Enum.TextXAlignment.Left
+	PromptInput.TextYAlignment = Enum.TextYAlignment.Top
+	PromptInput.ClearTextOnFocus = false
+	PromptInput.MultiLine = true
+	PromptInput.PlaceholderText = "-- WRITE COMMANDS OR CODE COMMENTS HERE...\n-- Examples:\n-- Give Player1 5000 Gold\n-- Set Player2 WalkSpeed to 50"
+	PromptInput.Text = ""
+	PromptInput.Parent = MainPanel
+	
+	local InputCorner = Instance.new("UICorner")
+	InputCorner.CornerRadius = UDim.new(0, 6)
+	InputCorner.Parent = PromptInput
+	
+	local InputStroke = Instance.new("UIStroke")
+	InputStroke.Color = Color3.fromRGB(40, 40, 50)
+	InputStroke.Thickness = 1
+	InputStroke.Parent = PromptInput
+	
+	-- PREMIUM INTERACTIVE ACCENT BUTTON
+	local ExecuteBtn = Instance.new("TextButton")
+	ExecuteBtn.Name = "ExecuteBtn"
+	ExecuteBtn.Size = UDim2.new(0.94, 0, 0.14, 0)
+	ExecuteBtn.Position = UDim2.new(0.03, 0, 0.82, 0)
+	ExecuteBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 100)
+	ExecuteBtn.Text = "RUN SYSTEM ROUTER"
+	ExecuteBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	ExecuteBtn.Font = Enum.Font.GothamBold
+	ExecuteBtn.TextSize = 14
+	ExecuteBtn.Parent = MainPanel
+	
+	local BtnCorner = Instance.new("UICorner")
+	BtnCorner.CornerRadius = UDim.new(0, 6)
+	BtnCorner.Parent = ExecuteBtn
+	
+	-- EMBEDDED ENGINE HOVER ANIMATIONS
+	ExecuteBtn.MouseEnter:Connect(function()
+		TweenService:Create(ExecuteBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 190, 130)}):Play()
+	end)
+	ExecuteBtn.MouseLeave:Connect(function()
+		TweenService:Create(ExecuteBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 140, 100)}):Play()
+	end)
+	
+	-- PACK AND FIRE INPUT STRINGS ACROSS THE NETWORK BOUNDARY
+	ExecuteBtn.MouseButton1Click:Connect(function()
+		if string.len(PromptInput.Text) > 3 then
+			ExecuteBtn.Text = "AI BALANCING DATA FLUIDS..."
+			ExecuteBtn.Active = false
+			
+			RemoteEvent:FireServer(PromptInput.Text)
+			
+			task.wait(1)
+			ExecuteBtn.Text = "RUN SYSTEM ROUTER"
+			ExecuteBtn.Active = true
+		end
+	end)
+end
+
+-- Force UI assembly immediately upon verified administrative connection
+Players.PlayerAdded:Connect(BuildPremiumUI)
+for _, p in pairs(Players:GetPlayers()) do BuildPremiumUI(p) end
+
+-- =============================================================================
+-- PHASE 2: CORE AI DATA COMPILER & PARSING RULES SYSTEM
+-- =============================================================================
+local function AICoreCompiler(rawText)
+	-- SYSTEM INSTRUCTIONS: Force the data engine to analyze comments "--" and text
+	local lowerInput = string.lower(rawText)
+	local parsedPayload = { action = "unknown", target = "", value = 0, stat = "" }
+	
+	-- RULE 1: Track target player identity expressions
+	local targetPlayer = nil
+	for _, p in pairs(Players:GetPlayers()) do
+		if string.find(lowerInput, string.lower(p.Name)) then
+			targetPlayer = p.Name
+			break
+		end
+	end
+	parsedPayload.target = targetPlayer or ""
+	
+	-- RULE 2: Force matching dictionary routines via comment filters
+	if string.find(lowerInput, "gold") or string.find(lowerInput, "money") or string.find(lowerInput, "cash") then
+		parsedPayload.stat = "Gold"
+	elseif string.find(lowerInput, "walkspeed") or string.find(lowerInput, "speed") then
+		parsedPayload.stat = "WalkSpeed"
+	elseif string.find(lowerInput, "jumppower") or string.find(lowerInput, "jump") then
+		parsedPayload.stat = "JumpPower"
+	end
+	
+	-- RULE 3: Extract any continuous integers found inside the text array
+	local numericalValue = string.match(rawText, "%d+")
+	if numericalValue then
+		parsedPayload.value = tonumber(numericalValue)
+	end
+	
+	-- RULE 4: Isolate administrative intent actions
+	if string.find(lowerInput, "give") or string.find(lowerInput, "add") or string.find(lowerInput, "transfer") then
+		parsedPayload.action = "modify_stat"
+	elseif string.find(lowerInput, "set") or string.find(lowerInput, "change") or string.find(lowerInput, "force") then
+		parsedPayload.action = "set_stat"
+	end
+	
+	return parsedPayload
+end
+
+-- =============================================================================
+-- PHASE 3: SECURE DATA ROUTER EXECUTION MATRIX
+-- =============================================================================
+RemoteEvent.OnServerEvent:Connect(function(player, rawPrompt)
+	-- Hard Whitelist Rule: Drop the request immediately if unauthorized
+	if player.UserId ~= OWNER_ID then 
+		warn("[CRITICAL BLOCK]: Unauthorized server deployment drop.")
+		return 
+	end
+	
+	-- Run input through the rule engine to process comments and data commands
+	local structuredData = AICoreCompiler(rawPrompt)
+	local targetObj = Players:FindFirstChild(structuredData.target)
+	
+	if not targetObj then
+		warn("[AI Error]: Could not identify a valid target player name in the text.")
+		return
+	end
+	
+	-- ROUTER 1: Modifying Physical Character Attributes (Speed / Jump)
+	if structuredData.stat == "WalkSpeed" or structuredData.stat == "JumpPower" then
+		local character = targetObj.Character
+		if character then
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+			if humanoid then
+				humanoid[structuredData.stat] = structuredData.value
+				print(`[AI Action]: Successfully routed character change. {structuredData.stat} set to {structuredData.value}`)
+			end
+		end
+		
+	-- ROUTER 2: Modifying In-Game Currency Systems Safely (Leaderstats)
+	elseif structuredData.stat ~= "" and structuredData.action ~= "unknown" then
+		local leaderstats = targetObj:FindFirstChild("leaderstats")
+		if leaderstats then
+			local specificStat = leaderstats:FindFirstChild(structuredData.stat)
+			if specificStat then
+				if structuredData.action == "set_stat" then
+					specificStat.Value = structuredData.value
+				elseif structuredData.action == "modify_stat" then
+					specificStat.Value += structuredData.value
+				end
+				print(`[AI Action]: Successfully guided leaderboard database manipulation. {structuredData.stat} is now {specificStat.Value}`)
+			else
+				warn(`[AI Error]: Stat "{structuredData.stat}" not found in player leaderstats folder.`)
+			end
+		else
+			warn("[AI Error]: Target player does not possess a leaderstats folder structure.")
+		end
+	end
+end)
