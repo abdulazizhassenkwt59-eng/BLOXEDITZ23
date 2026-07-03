@@ -6,7 +6,7 @@ local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 -- SECURITY: Change this to your exact Roblox UserID so ONLY you can open the UI
-local OWNER_ID = 12345678 
+local OWNER_ID = 3359465840
 
 -- CREATE THE NETWORK BOUNDARY
 local RemoteEvent = ReplicatedStorage:FindFirstChild("AI_System_Gate")
